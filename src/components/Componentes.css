@@ -1,0 +1,63 @@
+
+.tarjeta-metrica {
+  background: white;
+  padding: 22px;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  border-left: 5px solid #2563eb;
+  flex: 1;
+  min-width: 180px;
+}
+
+.tarjeta-metrica h3 {
+  color: #475569;
+  font-size: 16px;
+  margin-bottom: 12px;
+}
+
+.valor-metrica {
+  color: #2563eb;
+  font-size: 30px;
+  font-weight: bold;
+  margin: 8px 0;
+}
+
+.tarjeta-metrica span {
+  color: #64748b;
+  font-size: 13px;
+}
+
+.contenedor-tabla {
+  background: white;
+  padding: 22px;
+  border-radius: 12px;
+  margin-top: 30px;
+  overflow-x: auto;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+}
+
+.contenedor-tabla h2 {
+  color: #1e293b;
+  margin-bottom: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 650px;
+}
+
+th, td {
+  padding: 13px;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+th {
+  background: #2563eb;
+  color: white;
+}
+
+tbody tr:hover {
+  background: #eff6ff;
+}

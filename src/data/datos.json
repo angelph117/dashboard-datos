@@ -1,0 +1,69 @@
+
+{
+  "estudiantes": [
+    {
+      "id": 1,
+      "nombre": "Carlos",
+      "edad": 18,
+      "genero": "Masculino",
+      "calificacion": 92,
+      "carrera": "Ingeniería en Sistemas"
+    },
+    {
+      "id": 2,
+      "nombre": "María",
+      "edad": 19,
+      "genero": "Femenino",
+      "calificacion": 95,
+      "carrera": "Administración"
+    },
+    {
+      "id": 3,
+      "nombre": "José",
+      "edad": 20,
+      "genero": "Masculino",
+      "calificacion": 85,
+      "carrera": "Ingeniería en Sistemas"
+    },
+    {
+      "id": 4,
+      "nombre": "Ana",
+      "edad": 18,
+      "genero": "Femenino",
+      "calificacion": 89,
+      "carrera": "Contabilidad"
+    },
+    {
+      "id": 5,
+      "nombre": "Luis",
+      "edad": 21,
+      "genero": "Masculino",
+      "calificacion": 78,
+      "carrera": "Administración"
+    },
+    {
+      "id": 6,
+      "nombre": "Laura",
+      "edad": 20,
+      "genero": "Femenino",
+      "calificacion": 98,
+      "carrera": "Ingeniería en Sistemas"
+    },
+    {
+      "id": 7,
+      "nombre": "Pedro",
+      "edad": 19,
+      "genero": "Masculino",
+      "calificacion": 88,
+      "carrera": "Contabilidad"
+    },
+    {
+      "id": 8,
+      "nombre": "Sofía",
+      "edad": 18,
+      "genero": "Femenino",
+      "calificacion": 91,
+      "carrera": "Administración"
+    }
+  ]
+}
