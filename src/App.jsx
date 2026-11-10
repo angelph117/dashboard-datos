@@ -1,4 +1,5 @@
 
+import PanelAnalitico from "./components/PanelAnalitico";
 import { useState, useEffect } from "react";
 
 import {
@@ -79,6 +80,7 @@ function App() {
       </section>
 
       <TablaDatos estudiantes={datos.estudiantes} />
+      <PanelAnalitico />
 
       <footer className="pie-pagina">
         <p>Práctica 2 - Unidad 3 | Estructuración de Componentes y Servicios</p>

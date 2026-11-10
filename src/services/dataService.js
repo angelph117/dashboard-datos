@@ -1,4 +1,5 @@
 
+import apiClient from "./apiClient";
 import datos from "../data/datos.json";
 
 // Función para obtener los datos simulando una petición HTTP
@@ -42,3 +43,36 @@ export function procesarDatos(datos) {
     )
   };
 }
+
+
+// Obtener datos meteorológicos desde Open-Meteo
+export const obtenerPrediccion = async () => {
+
+  // Realizar petición GET a la API
+  const respuesta = await apiClient.get("/forecast", {
+    params: {
+      latitude: 19.4326,
+      longitude: -99.1332,
+      hourly: "temperature_2m,relative_humidity_2m,precipitation_probability",
+      forecast_days: 1,
+      timezone: "America/Mexico_City",
+    },
+  });
+
+  // Extraer los datos de la respuesta
+  const datosAPI = respuesta.data;
+
+  // Transformar la información para utilizarla
+  // fácilmente en nuestros componentes.
+  const datosLimpios = datosAPI.hourly.time.map((hora, indice) => ({
+    id: indice + 1,
+    hora: hora,
+    temperatura: datosAPI.hourly.temperature_2m[indice],
+    humedad: datosAPI.hourly.relative_humidity_2m[indice],
+    probabilidadLluvia:
+      datosAPI.hourly.precipitation_probability[indice],
+  }));
+
+  // Devolver los datos procesados
+  return datosLimpios;
+};
