@@ -2,7 +2,10 @@
 import apiClient from "./apiClient";
 import datos from "../data/datos.json";
 
-// Función para obtener los datos simulando una petición HTTP
+// ==========================================
+// 1. OBTENER DATOS SIMULANDO UNA PETICIÓN HTTP
+// ==========================================
+
 export async function obtenerDatosVisualizacion() {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -11,17 +14,23 @@ export async function obtenerDatosVisualizacion() {
   });
 }
 
-// Función para procesar los datos
+// ==========================================
+// 2. PROCESAR LOS DATOS DE ESTUDIANTES
+// ==========================================
+
 export function procesarDatos(datos) {
   const estudiantes = datos.estudiantes;
 
   const totalEstudiantes = estudiantes.length;
 
   const promedioGeneral =
-    estudiantes.reduce(
-      (total, estudiante) => total + estudiante.calificacion,
-      0
-    ) / totalEstudiantes;
+    totalEstudiantes > 0
+      ? estudiantes.reduce(
+          (total, estudiante) =>
+            total + estudiante.calificacion,
+          0
+        ) / totalEstudiantes
+      : 0;
 
   const totalMasculino = estudiantes.filter(
     (estudiante) => estudiante.genero === "Masculino"
@@ -36,16 +45,20 @@ export function procesarDatos(datos) {
     promedioGeneral: promedioGeneral.toFixed(2),
     totalMasculino,
     totalFemenino,
+
     estudiantes: estudiantes.filter(
       (estudiante) =>
         estudiante.nombre &&
         typeof estudiante.calificacion === "number"
-    )
+    ),
   };
 }
 
+// ==========================================
+// 3. OBTENER DATOS METEOROLÓGICOS
+// DESDE LA API OPEN-METEO
+// ==========================================
 
-// Obtener datos meteorológicos desde Open-Meteo
 export const obtenerPrediccion = async () => {
 
   // Realizar petición GET a la API
@@ -53,8 +66,12 @@ export const obtenerPrediccion = async () => {
     params: {
       latitude: 19.4326,
       longitude: -99.1332,
-      hourly: "temperature_2m,relative_humidity_2m,precipitation_probability",
-      forecast_days: 1,
+
+      hourly:
+        "temperature_2m,relative_humidity_2m,precipitation_probability",
+
+      forecast_days: 7,
+
       timezone: "America/Mexico_City",
     },
   });
@@ -63,15 +80,25 @@ export const obtenerPrediccion = async () => {
   const datosAPI = respuesta.data;
 
   // Transformar la información para utilizarla
-  // fácilmente en nuestros componentes.
-  const datosLimpios = datosAPI.hourly.time.map((hora, indice) => ({
-    id: indice + 1,
-    hora: hora,
-    temperatura: datosAPI.hourly.temperature_2m[indice],
-    humedad: datosAPI.hourly.relative_humidity_2m[indice],
-    probabilidadLluvia:
-      datosAPI.hourly.precipitation_probability[indice],
-  }));
+  // fácilmente en nuestros componentes
+  const datosLimpios = datosAPI.hourly.time.map(
+    (hora, indice) => ({
+      id: indice + 1,
+
+      fecha: hora.split("T")[0],
+
+      hora: hora.split("T")[1],
+
+      temperatura:
+        datosAPI.hourly.temperature_2m[indice],
+
+      humedad:
+        datosAPI.hourly.relative_humidity_2m[indice],
+
+      probabilidadLluvia:
+        datosAPI.hourly.precipitation_probability[indice],
+    })
+  );
 
   // Devolver los datos procesados
   return datosLimpios;

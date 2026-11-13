@@ -4,33 +4,45 @@ import "./Componentes.css";
 function TablaDatos({ estudiantes }) {
   return (
     <div className="contenedor-tabla">
-      <h2>Registro de estudiantes</h2>
+      <h2>Registro de datos meteorológicos</h2>
 
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Edad</th>
-            <th>Género</th>
-            <th>Calificación</th>
-            <th>Carrera</th>
-          </tr>
-        </thead>
+      <div className="tabla-responsive">
+        {estudiantes.length === 0 ? (
+          <p>No hay registros disponibles para los filtros seleccionados.</p>
+        ) : (
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Temperatura (°C)</th>
+                <th>Humedad (%)</th>
+                <th>Probabilidad de lluvia (%)</th>
+              </tr>
+            </thead>
 
-        <tbody>
-          {estudiantes.map((estudiante) => (
-            <tr key={estudiante.id}>
-              <td>{estudiante.id}</td>
-              <td>{estudiante.nombre}</td>
-              <td>{estudiante.edad}</td>
-              <td>{estudiante.genero}</td>
-              <td>{estudiante.calificacion}</td>
-              <td>{estudiante.carrera}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+            <tbody>
+              {estudiantes.map((registro) => (
+                <tr key={registro.id}>
+                  <td>{registro.id}</td>
+                  <td>{registro.fecha}</td>
+                  <td>{registro.hora}</td>
+                  <td>
+                    {registro.temperatura ?? "N/D"}
+                  </td>
+                  <td>
+                    {registro.humedad ?? "N/D"}
+                  </td>
+                  <td>
+                    {registro.probabilidadLluvia ?? "N/D"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
     </div>
   );
 }

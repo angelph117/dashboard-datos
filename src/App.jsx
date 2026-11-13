@@ -1,91 +1,68 @@
 
-import PanelAnalitico from "./components/PanelAnalitico";
 import { useState, useEffect } from "react";
-
-import {
-  obtenerDatosVisualizacion,
-  procesarDatos
-} from "./services/dataService";
-
-import TarjetaMetrica from "./components/TarjetaMetrica";
-import TablaDatos from "./components/TablaDatos";
-
 import "./App.css";
+import DashboardLayout from "./components/DashboardLayout";
+import { obtenerPrediccion } from "./services/dataService";
 
 function App() {
-  const [datos, setDatos] = useState(null);
+
+  // Estado global de los filtros
+  const [filtros, setFiltros] = useState({
+    categoria: "todas",
+    fecha: ""
+  });
+
+  // Estado de los registros
+  const [datos, setDatos] = useState([]);
+
+  // Estados de carga y errores
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    async function cargarDatos() {
+
+    const cargarDatos = async () => {
       try {
-        const respuesta = await obtenerDatosVisualizacion();
+        setCargando(true);
+        setError("");
 
-        const datosProcesados = procesarDatos(respuesta);
+        const respuesta = await obtenerPrediccion();
 
-        setDatos(datosProcesados);
-      } catch (error) {
-        console.error("Error al obtener los datos:", error);
-        setError("No fue posible cargar la información.");
+        // Aplicar filtro de fecha
+        const datosFiltrados = filtros.fecha
+          ? respuesta.filter(
+              registro => registro.fecha === filtros.fecha
+            )
+          : respuesta;
+
+        setDatos(datosFiltrados);
+
+      } catch (err) {
+        console.error("Error al obtener datos:", err);
+
+        setError(
+          "No fue posible obtener los datos de la API."
+        );
+
+        setDatos([]);
+
       } finally {
         setCargando(false);
       }
-    }
+    };
 
     cargarDatos();
-  }, []);
 
-  if (cargando) {
-    return <h2 className="mensaje">Cargando información...</h2>;
-  }
-
-  if (error) {
-    return <h2 className="mensaje">{error}</h2>;
-  }
+  }, [filtros]);
 
   return (
-    <div className="dashboard">
-      <header className="encabezado">
-        <h1>Dashboard de Ciencia de Datos</h1>
-        <p>Visualización y análisis de estudiantes</p>
-      </header>
-
-      <section className="contenedor-metricas">
-
-        <TarjetaMetrica
-          titulo="Total de estudiantes"
-          valor={datos.totalEstudiantes}
-          descripcion="Registros analizados"
-        />
-
-        <TarjetaMetrica
-          titulo="Promedio general"
-          valor={datos.promedioGeneral}
-          descripcion="Promedio de calificaciones"
-        />
-
-        <TarjetaMetrica
-          titulo="Hombres"
-          valor={datos.totalMasculino}
-          descripcion="Estudiantes masculinos"
-        />
-
-        <TarjetaMetrica
-          titulo="Mujeres"
-          valor={datos.totalFemenino}
-          descripcion="Estudiantes femeninos"
-        />
-
-      </section>
-
-      <TablaDatos estudiantes={datos.estudiantes} />
-      <PanelAnalitico />
-
-      <footer className="pie-pagina">
-        <p>Práctica 2 - Unidad 3 | Estructuración de Componentes y Servicios</p>
-      </footer>
-    </div>
+    <DashboardLayout
+      filtros={filtros}
+      setFiltros={setFiltros}
+      datos={datos}
+      cargando={cargando}
+      error={error}
+    />
   );
 }
 
