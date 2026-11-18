@@ -3,21 +3,59 @@ import Navbar from "./Navbar";
 import PanelFiltros from "./PanelFiltros";
 import TarjetaMetrica from "./TarjetaMetrica";
 import TablaDatos from "./TablaDatos";
-import GraficaTemperatura from "./GraficaTemperatura";
+
+import GraficoTendencia from "./charts/GraficoTendencia";
+import GraficoComparativo from "./charts/GraficoComparativo";
+
+import { formatearParaGrafico } from "../services/dataService";
 
 function DashboardLayout({
   filtros,
   setFiltros,
   datos,
   cargando,
-  error
+  error,
 }) {
 
+  // Seleccionar la variable meteorológica
+  const configuracion = {
+    todas: {
+      campo: "temperatura",
+      titulo: "Evolución de la temperatura",
+      unidad: "°C",
+    },
+
+    temperatura: {
+      campo: "temperatura",
+      titulo: "Evolución de la temperatura",
+      unidad: "°C",
+    },
+
+    humedad: {
+      campo: "humedad",
+      titulo: "Evolución de la humedad",
+      unidad: "%",
+    },
+
+    lluvia: {
+      campo: "probabilidadLluvia",
+      titulo: "Probabilidad de lluvia",
+      unidad: "%",
+    },
+  };
+
+  const seleccion =
+    configuracion[filtros.categoria] ||
+    configuracion.temperatura;
+
+  // Calcular promedio de una variable
   const calcularPromedio = (campo) => {
     const valores = datos
-      .map(registro => registro[campo])
-      .filter(valor =>
-        typeof valor === "number" && Number.isFinite(valor)
+      .map((registro) => registro[campo])
+      .filter(
+        (valor) =>
+          typeof valor === "number" &&
+          Number.isFinite(valor)
       );
 
     if (valores.length === 0) return "N/D";
@@ -28,6 +66,19 @@ function DashboardLayout({
 
     return promedio.toFixed(1);
   };
+
+  // Preparar datos para el gráfico de tendencia
+  const datosTendencia = formatearParaGrafico(
+    datos,
+    seleccion.campo
+  );
+
+  // Preparar promedios diarios para el gráfico comparativo
+  const datosComparativos = formatearParaGrafico(
+    datos,
+    seleccion.campo,
+    true
+  );
 
   return (
     <div className="dashboard-layout">
@@ -74,7 +125,13 @@ function DashboardLayout({
 
         {!cargando && !error && (
           <>
-            <section className="contenedor-metricas" id="metricas">
+
+            {/* TARJETAS DE MÉTRICAS */}
+
+            <section
+              className="contenedor-metricas"
+              id="metricas"
+            >
 
               <TarjetaMetrica
                 titulo="Temperatura promedio"
@@ -96,22 +153,54 @@ function DashboardLayout({
 
             </section>
 
+            {/* GRÁFICAS INTERACTIVAS */}
+
             <section id="grafica">
-              <GraficaTemperatura
-                datos={datos}
-                categoria={filtros.categoria}
-              />
+
+              <h2 className="titulo-graficas">
+                Visualización avanzada de datos
+              </h2>
+
+              <p className="descripcion-graficas">
+                Variable seleccionada: {seleccion.titulo}
+              </p>
+
+              <div className="contenedor-graficas">
+
+                <GraficoTendencia
+                  datos={datosTendencia}
+                  titulo={seleccion.titulo}
+                  unidad={seleccion.unidad}
+                />
+
+                <GraficoComparativo
+                  datos={datosComparativos}
+                  titulo={seleccion.titulo}
+                  unidad={seleccion.unidad}
+                />
+
+              </div>
+
             </section>
 
-            <section id="tabla" className="seccion-tabla">
+            {/* TABLA DE REGISTROS */}
+
+            <section
+              id="tabla"
+              className="seccion-tabla"
+            >
+
               <h2>Tabla de registros meteorológicos</h2>
 
               <TablaDatos estudiantes={datos} />
+
             </section>
+
           </>
         )}
 
       </main>
+
     </div>
   );
 }

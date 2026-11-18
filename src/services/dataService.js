@@ -103,3 +103,90 @@ export const obtenerPrediccion = async () => {
   // Devolver los datos procesados
   return datosLimpios;
 };
+
+
+// ==========================================
+// 4. FORMATEAR DATOS PARA LAS GRÁFICAS
+// ==========================================
+
+export function formatearParaGrafico(
+  datosCrudos,
+  campo = "temperatura",
+  agruparPorFecha = false
+) {
+  // Verificar que recibimos un arreglo válido
+  if (!Array.isArray(datosCrudos) || datosCrudos.length === 0) {
+    return {
+      labels: [],
+      values: [],
+    };
+  }
+
+  // Filtrar registros con valores numéricos válidos
+  const registrosValidos = datosCrudos.filter(
+    (registro) =>
+      registro &&
+      registro.fecha &&
+      typeof registro[campo] === "number" &&
+      Number.isFinite(registro[campo])
+  );
+
+  // Evitar errores si no existen datos válidos
+  if (registrosValidos.length === 0) {
+    return {
+      labels: [],
+      values: [],
+    };
+  }
+
+  // Agrupar por fecha para obtener promedios diarios
+  if (agruparPorFecha) {
+    const agrupados = {};
+
+    registrosValidos.forEach((registro) => {
+      const fecha = registro.fecha;
+
+      if (!agrupados[fecha]) {
+        agrupados[fecha] = {
+          total: 0,
+          cantidad: 0,
+        };
+      }
+
+      agrupados[fecha].total += registro[campo];
+      agrupados[fecha].cantidad++;
+    });
+
+    const labels = Object.keys(agrupados);
+
+    const values = labels.map((fecha) =>
+      Number(
+        (
+          agrupados[fecha].total /
+          agrupados[fecha].cantidad
+        ).toFixed(2)
+      )
+    );
+
+    return {
+      labels,
+      values,
+    };
+  }
+
+  // Preparar los datos para una gráfica de tendencia
+  const labels = registrosValidos.map((registro) =>
+    registro.hora
+      ? `${registro.fecha} ${registro.hora}`
+      : registro.fecha
+  );
+
+  const values = registrosValidos.map(
+    (registro) => registro[campo]
+  );
+
+  return {
+    labels,
+    values,
+  };
+}
